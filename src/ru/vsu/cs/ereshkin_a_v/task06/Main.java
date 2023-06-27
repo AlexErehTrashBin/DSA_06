@@ -1,7 +1,6 @@
 package ru.vsu.cs.ereshkin_a_v.task06;
 
 import ru.vsu.cs.ereshkin_a_v.task06.gui.FrameMain;
-import ru.vsu.cs.util.SwingUtils;
 
 import java.util.Locale;
 

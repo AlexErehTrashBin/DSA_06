@@ -188,7 +188,8 @@ public class JTableUtils {
         JTable table, int defaultColWidth,
         boolean showRowsIndexes, boolean showColsIndexes,
         boolean changeRowsCountButtons, boolean changeColsCountButtons,
-        int changeButtonsSize, int changeButtonsMargin
+        int changeButtonsSize, int changeButtonsMargin,
+        Runnable minusAction, Runnable plusAction
     ) {
         table.setCellSelectionEnabled(true);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -238,6 +239,7 @@ public class JTableUtils {
                     JButton minusButton = createPlusMinusButton("–", changeButtonsSize);
                     minusButton.setName(table.getName() + "-minusColumnButton");
                     minusButton.addActionListener((ActionEvent evt) -> {
+                        minusAction.run();
                         tableModel.setColumnCount(tableModel.getColumnCount() > 0 ? tableModel.getColumnCount() - 1 : 0);
                         recalculateJTableSize(table);
                     });
@@ -247,6 +249,7 @@ public class JTableUtils {
                     JButton plusButton = createPlusMinusButton("+", changeButtonsSize);
                     plusButton.setName(table.getName() + "-plusColumnButton");
                     plusButton.addActionListener((ActionEvent evt) -> {
+                        plusAction.run();
                         tableModel.addColumn(String.format("[%d]", tableModel.getColumnCount()));
                         recalculateJTableSize(table);
                     });
@@ -373,33 +376,18 @@ public class JTableUtils {
         }
     }
 
-    /**
-     * Аналогичен {@link #initJTableForArray(javax.swing.JTable, int, boolean, boolean, boolean, boolean, int, int) }.
-     * {@code changeButtonsSize} принимает значение {@link #DEFAULT_PLUS_MINUS_BUTTONS_SIZE}.
-     * {@code changeButtonsMargin} принимает значение {@link #DEFAULT_GAP}.
-     *
-     * @see #initJTableForArray(javax.swing.JTable, int, boolean, boolean, boolean, boolean, int, int)
-     */
     public static void initJTableForArray(
         JTable table, int defaultColWidth,
         boolean showRowsIndexes, boolean showColsIndexes,
-        boolean changeRowsCountButtons, boolean changeColsCountButtons
+        boolean changeRowsCountButtons, boolean changeColsCountButtons,
+        Runnable minusAction, Runnable plusAction
     ) {
         initJTableForArray(
             table, defaultColWidth,
             showRowsIndexes, showColsIndexes, changeRowsCountButtons, changeColsCountButtons,
-            22, DEFAULT_GAP
+            22, DEFAULT_GAP, minusAction, plusAction
         );
     }
-
-    /**
-     * Изменение размеров JTable
-     * @param table компонент JTable
-     * @param rowCount новое кол-во строк (меньше или равно 0 - не менять)
-     * @param colCount новое кол-во столбцов (меньше или равно 0 - не менять)
-     * @param rowHeight высота строки (меньше или равно 0 - не менять)
-     * @param columnWidth ширина столбца (меньше или равно 0 - не менять)
-     */
     public static void resizeJTable(JTable table, int rowCount, int colCount, int rowHeight, int columnWidth) {
         if (!(table.getModel() instanceof DefaultTableModel tableModel)) {
             return;
@@ -411,31 +399,12 @@ public class JTableUtils {
         tableModel.setColumnCount((colCount > 0) ? colCount : table.getColumnCount());
         recalculateJTableSize(table);
     }
-
-    /**
-     * Изменение размеров JTable (ширина столбцов и высота строк не меняется)
-     * @param table компонент JTable
-     * @param rowCount новое кол-во строк
-     * @param colCount новое кол-во столбцов
-     */
     public static void resizeJTable(JTable table, int rowCount, int colCount) {
         resizeJTable(table, rowCount, colCount, -1, -1);
     }
-
-    /**
-     * Изменение размеров ячеек JTable
-     * @param table компонент JTable
-     * @param rowHeight высота строки
-     * @param columnWidth ширина столбца
-     */
     public static void resizeJTableCells(JTable table, int rowHeight, int columnWidth) {
         resizeJTable(table, -1, -1, rowHeight, columnWidth);
     }
-
-    /**
-     * Изменение ширины заголовков столбцов
-     * @param width Ширина
-     */
     public static void setRowsHeaderColumnWidth(JTable table, int width) {
         if (table.getParent() instanceof JViewport && table.getParent().getParent() instanceof JScrollPane scrollPane) {
             if (scrollPane.getRowHeader() != null) {
@@ -447,11 +416,6 @@ public class JTableUtils {
             }
         }
     }
-
-    /**
-     * Запись данных из массива (одномерного или двухмерного) в JTable
-     * (основная реализация, закрытый метод, используется в остальных writeArrayToJTable)
-     */
     private static void writeArrayToJTable(JTable table, Object array, String itemFormat) {
         if (!array.getClass().isArray()) {
             return;
@@ -497,11 +461,6 @@ public class JTableUtils {
         }
         recalculateJTableSize(table);
     }
-
-    /**
-     * Запись данных из массива int[] в JTable
-     * (основная реализация, закрытый метод, используется в ArrayToGrid и Array2ToGrid)
-     */
     public static void writeArrayToJTable(JTable table, int[] array) {
         writeArrayToJTable(table, array, "%d");
     }

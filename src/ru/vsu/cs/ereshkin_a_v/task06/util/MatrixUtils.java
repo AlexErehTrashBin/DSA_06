@@ -1,6 +1,9 @@
 package ru.vsu.cs.ereshkin_a_v.task06.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class MatrixUtils {
     public static String toString(String[][] arr2){
@@ -25,5 +28,20 @@ public class MatrixUtils {
             sb.append(String.format(Locale.ROOT, arr[i]));
         }
         return sb.toString();
+    }
+    public static String[][] getStringArrInCol(String[] arr){
+        String[][] matrix = new String[arr.length][1];
+        for (int i = 0; i < arr.length; i++) {
+            matrix[i][0] = arr[i];
+        }
+        return matrix;
+    }
+    public static String[][] getMatrixFromKeySet(Set<String> set){
+        List<String> list = new ArrayList<>(set);
+        String[][] matrix = new String[list.size()][1];
+        for (int i = 0; i < list.size(); i++) {
+            matrix[i][0] = list.get(i);
+        }
+        return matrix;
     }
 }

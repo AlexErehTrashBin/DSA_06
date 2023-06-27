@@ -40,15 +40,20 @@ public class Task {
     public static Map<String, Map<String, String>> solve(String[][] matrix) {
         Map<String, List<Integer>> studentIndexMap = getStudentIndexMap(matrix);
         Map<String, Map<String, String>> result = new HashMap<>();
-        for (Map.Entry<String, List<Integer>> name : studentIndexMap.entrySet()) {
+        for (Map.Entry<String, List<Integer>> entry : studentIndexMap.entrySet()) {
             Map<String, String> disciplineGradeMap = new HashMap<>();
 
-            for (Integer line : name.getValue()) {
+            for (Integer line : entry.getValue()) {
+                if (matrix[line].length!=3) continue;
                 String discipline = matrix[line][0];
                 String grade = matrix[line][2];
                 disciplineGradeMap.put(discipline, grade);
             }
-            result.put(name.getKey(), disciplineGradeMap);
+            /*if (disciplineGradeMap.values().iterator().next().equals("null")) {
+                result.put(entry.getKey(), new HashMap<>());
+                continue;
+            }*/
+            result.put(entry.getKey(), disciplineGradeMap);
         }
         return result;
     }
